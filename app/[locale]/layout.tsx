@@ -1,26 +1,10 @@
 import type { Metadata } from "next";
-import { Anuphan, Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { getMessages, isLocale, locales } from "@/lib/i18n";
 import "../globals.css";
 
-const geist = Geist({
-  variable: "--font-geist",
-  subsets: ["latin"],
-  display: "swap",
-});
-const anuphan = Anuphan({
-  variable: "--font-thai",
-  subsets: ["thai", "latin"],
-  display: "swap",
-});
-const mono = Geist_Mono({
-  variable: "--font-code",
-  subsets: ["latin"],
-  display: "swap",
-});
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
@@ -49,11 +33,18 @@ export default async function LocaleLayout({
   if (!isLocale(locale)) notFound();
   const t = getMessages(locale);
   return (
-    <html
-      lang={locale}
-      className={`${geist.variable} ${anuphan.variable} ${mono.variable}`}
-    >
+    <html lang={locale}>
+      <head>
+        <link rel="preload" href="/fonts/geist-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        {locale === "th" && <>
+          <link rel="preload" href="/fonts/anuphan-thai.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+          <link rel="preload" href="/fonts/anuphan-latin.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        </>}
+      </head>
       <body>
+        <div className="story-progress" aria-hidden="true">
+          <span />
+        </div>
         <a className="skip-link" href="#main">
           {t.skip}
         </a>

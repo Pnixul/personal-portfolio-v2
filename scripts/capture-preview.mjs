@@ -14,10 +14,13 @@ try {
     reducedMotion: "reduce",
   });
   for (const locale of ["th", "en"]) {
-    await page.goto(`http://127.0.0.1:3000/${locale}`);
+    const response = await page.goto(`http://127.0.0.1:3000/${locale}`);
+    if (response?.status() !== 200)
+      throw new Error(`Cannot capture ${locale}: HTTP ${response?.status()}`);
     await page.evaluate(() => document.fonts.ready);
+    await page.locator(".character-ink").evaluate((image) => image.decode());
     await page.screenshot({
-      path: `public/projects/portfolio-v2-${locale}-overview.png`,
+      path: `public/projects/portfolio-v2-${locale}-coding.png`,
       animations: "disabled",
     });
   }
